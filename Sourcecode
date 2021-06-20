@@ -1,0 +1,284 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct varian{											//inisialisasi struct untuk varian rasa
+	char flavor[20];									//flavor untuk rasa/nama minuman
+	int price;											//harga minuman
+	int laku;											//jumlah laku terjual minuman
+	struct varian *next;								//untuk pointer ke node berikutnya
+};
+
+// fungsi yang dipakai pada program
+void menu(struct varian** ref); 						//fungsi untuk menu awal
+void admin(struct varian** ref); 						//fungsi untuk menu admin
+void input(struct varian** ref); 						//fungsi untuk menu input minuman serta data lainnya
+void inputlist(struct varian** ref, char name[], int harga, int jual); 	//fungsi untuk menu input lewat linked list
+void list(struct varian** ref, int kode); 						//fungsi untuk menampilkan list minuman yang sudah diinput serta akan diurutkan (blom bisa)
+void beli(struct varian** ref); 						//fungsi untuk pembelian yang diatur oleh admin (blom selesai)
+void back(struct varian** ref); 						//fungsi untuk kembali ke menu awal
+
+int main(){
+	struct varian *head = NULL; 						//inisialisasi head linked list
+	
+	FILE *baca, *tulis; 								//inisialisasi pointer file untuk file handling
+	
+	baca = fopen("D:\\file.txt", "r");  				//deklarasi untuk reading file
+	tulis = fopen("D:\\file.txt", "a"); 				//deklarasi untuk menulis file
+	
+	//if statement apabila file belum dibuat dan langsung dibuat jika belum, jika sudah akan lanjut ke sesi berikutnya
+	if (baca == NULL){
+		fprintf(tulis, " %-30s | %-20s | %-15s |", "Varian Minuman", "Harga (Rupiah)", "Jumlah Terjual");
+	}
+	
+	//menutup file
+	fclose(baca);  
+	fclose(tulis);
+	
+	menu(&head); 			//memanggil fungsi menu
+}
+
+void menu(struct varian** ref){
+	struct varian *awal = *ref; 			//inisialisasi struct baru untuk passing parameter struct linked list
+	system("cls");
+	int pilih;								//inisialisasi variabel yang akan digunakan
+	
+	printf("Masuk sebagai? ");				//dialog untuk menanyakan user merupakan admin atau konsumen
+	printf("\n1. Admin\n2. Konsumen\n");
+	printf("Masukkan disini: ");
+	scanf("%d", &pilih);					
+	
+	//if statement untuk memasuki menu berikutnya (admin atau bukan)
+	if (pilih == 1){
+		system("cls");
+		admin(&awal);		//memanggil menu admin
+	}
+	else if (pilih == 2){
+	}
+}
+
+void admin(struct varian** ref){
+	struct varian *test = *ref; 		//inisialisasi struct baru untuk passing parameter struct linked list
+	int pilih, kodeadmin, pilih2, kodelist; 			//inisialisasi variabel yang akan digunakan
+	
+	printf("Masukkan Kode Admin: ");	//dialog untuk password masuk sebagai admin yang sudah ditentukan sistem
+	scanf("%d", &kodeadmin);
+	
+	//if statement apabila user berhasil atau tidak memasukkan password
+	if (kodeadmin == 7815){			
+		printf("Fitur yang tersedia:");
+		printf("\n1. Input Keterangan Minuman\n2. List Minuman\n3. Pembelian\n4. Keluar program");		//pilihan fitur pada program admin
+	
+		do{																	//do-while loop sebagai error handling
+			printf("\nSilahkan pilih fitur: ");
+			scanf("%d", &pilih);
+			if (pilih != 1 && pilih != 2 && pilih != 3 && pilih != 4){
+				printf("Masukkan angka yang sesuai!");
+			}
+		}while (pilih != 1 && pilih != 2 && pilih != 3 && pilih != 4);
+	
+		if (pilih == 1){
+			system("cls");
+			input(&test);													//memanggil fungsi input
+		}
+		else if(pilih == 2){
+			system("cls");
+			printf("List berdasarkan: \n1. Minuman dengan penjualan terbanyak\n2. Minuman dengan penjualan termurah");
+			scanf("%d", &kodelist);
+			list(&test, kodelist);													//memanggil fungsi list untuk display data 
+		}
+		else if(pilih == 3){
+			system("cls");
+			beli(&test);													//memanggil fungsi beli untuk mengatur pembelian
+		}
+	}
+	
+	
+	else {
+		printf("Kode yang anda masukkan salah, apakah anda ingin kembali ke menu admin?");	//else jika kode salah dimasukkan
+		printf("\n1 = Ya\n2 = Menu Awal\nSelain 1 & 2 untuk keluar program");				
+		printf("\nMasukkan disini: ");
+		scanf("%d", &pilih2);
+		
+		//if statement untuk kembali ke menu atau keluar program
+		if (pilih2 == 1){
+			admin(&test);
+		}
+		else if (pilih2 == 2){
+			menu(&test);
+		}
+		else {
+			printf("Terimakasih telah menggunakan program kami!");
+		}
+	}
+}
+
+void input(struct varian** ref){
+	struct varian *test2 = *ref;	//inisialisasi struct baru untuk passing parameter struct linked list
+	
+	char nama[20];					//inisialisasi variabel untuk memasukkan data yang akan diinput
+	int harga, jual;
+	int jumlah, i;					//variabel sampingan yang akan digunakan
+	
+	FILE *buka;							//inisialisasi untuk pointer file
+	buka = fopen("D:\\file.txt", "a+");	//deklarasi untuk menulis sekaligus membaca file
+	
+	printf("Masukkan jumlah minuman yang ingin diinput: ");		//dialog untuk meminta jumlah input yang akan dimasukkan
+	scanf("%d", &jumlah);
+	printf("\n");
+	
+	for(i = 0; i < jumlah; i++){
+		printf("Masukkan varian rasa/nama minuman: ");			//nama/rasa minuman
+		scanf(" %[^\n]s", nama);
+		printf("Masukkan harga: ");								//harga minuman
+		scanf("%d", &harga);
+		printf("Masukkan jumlah produk yang sudah terjual: ");  //jumlah laku terjual minuman
+		scanf("%d", &jual);
+		inputlist(&test2, nama, harga, jual);					//memanggil fungsi inputlist untuk memasukkan data ke linked list
+	}
+	
+	struct varian *buat_file = test2;							//inisisalisasi struct baru untuk memindahkan data yang ada di linked list ke file
+	
+	for(i = 0; i < jumlah; i++){								//looping untuk memindahkan data linked list ke file
+		fprintf(buka, "\n %-30s | %-20d |", buat_file->flavor, buat_file->price);		//menulis data ke file
+		buat_file = buat_file->next;							//berpindah ke node linked list berikutnya
+	}
+	
+	//menutup file
+	fclose(buka);
+	//memanggil fungsi back jika ingin kembali ke menu awal atau keluar program
+	back(&test2);
+}
+
+void inputlist(struct varian** ref, char name[], int harga, int jual){
+	struct varian* baru = (struct varian*) malloc(sizeof(struct varian));	//inisialisasi struct baru untuk menambah data dari parameter dengan malloc
+	
+	strcpy (baru->flavor, name);			//memindahkan isi dari name ke flavor
+	baru->price = harga;					//memindahkan isi dari harga ke price
+	baru->laku = jual;						//memindahkan isi dari jual ke laku
+	baru->next = (*ref);					//node berikutnya dari baru akan menjadi node-node dari ref
+	(*ref) = baru;							//baru akan menjadi first node
+}
+
+void list(struct varian** ref, int kode){
+	int tanda, i;
+	struct varian* buat_sort;
+	struct varian* buat_sort2 = NULL;
+	
+	
+	if (kode == 1){
+		do{
+			tanda = 0;
+			buat_sort = *ref;
+				while (buat_sort != buat_sort2){
+					if (buat_sort->laku < buat_sort->next->laku){
+						tukar(&buat_sort, &buat_sort->next);
+						tanda = 1;
+				}
+				buat_sort = buat_sort->next;
+			}
+			buat_sort2 = buat_sort;
+		} while (tanda);
+	}
+	else if (kode == 2){
+		do{
+			tanda = 0;
+			buat_sort = *ref;
+				while (buat_sort != buat_sort2){
+					if (buat_sort->laku > buat_sort->next->laku){
+						//ini kurang
+						tanda = 1;
+				}
+				buat_sort = buat_sort->next;
+			}
+			buat_sort2 = buat_sort;
+		} while (tanda);
+	}
+
+	struct varian *liat = *ref;				//inisialisasi struct baru untuk looping display
+	
+	printf("| %-30s | %-20s | %-15s |\n", "Varian Minuman", "Harga (Rp)", "Jumlah terjual");	//untuk membuat keterangan dari list/tabel
+	
+	//if statement untuk mengecek apakah list kosong atau tidak
+	if (liat == NULL){	
+		printf("List Kosong!");
+	}
+	//kombinasi if statement dan while loop untuk display data dari linked list
+	if ((*ref) != NULL){
+		while (liat != NULL){
+		printf("| %-30s | %-20d | %-15d |\n", liat->flavor, liat->price, liat->laku);
+		liat = liat->next;
+		} 
+	}
+	//memanggil fungsi back jika ingin kembali ke menu awal atau keluar program
+	back(&(*ref));
+}
+
+void beli(struct varian** ref){
+	struct varian *liat = *ref;									/*16 line berikutnya mirip dengan fungsi list dengan tujuan mempermudah urutan dan pencarian di 
+																line selanjutnya*/
+	int i = 1, jumlah, no_minum, kode = 1;						//inisialisasi variabel yang ingin digunakan
+		
+	printf("%-5s | %-30s | %-20s | %-15s |\n", "No.", "Varian Minuman", "Harga", "Jumlah terjual");
+	
+	if (liat == NULL){
+		printf("Silahkan masukkan data terlebih dahulu!");
+	}
+	if (*ref != NULL){
+		while (liat != NULL){
+		printf("%-5d | %-30s | %-20d | %-15d |\n", i, liat->flavor, liat->price, liat->laku);
+		liat = liat->next;
+		i++;
+		} 
+	}
+	
+	printf("Masukkan jumlah minuman yang dibeli: ");		//meminta user untuk memasukkan nomor minuman yang dibeli dari list 
+	scanf("%d", &jumlah);
+	int hasil_tambah[150];
+	for (i = 0; i < jumlah; i++){
+		printf("Masukkan nomor minuman ke-%d yang dibeli: ", i+1);
+		scanf("%d", &no_minum);
+		searchlist(&(*ref), no_minum);						//memanggil fungsi searchlist untuk menambah jumlah terjual/laku minuman yang dibeli
+	}
+	//memanggil fungsi back jika ingin kembali ke menu awal atau keluar program
+	back(&(*ref));
+}
+
+int searchlist(struct varian** ref, int nomor, int kode){	//parameter kode untuk membedakan tujuan search minuman
+	struct varian *temp = *ref;								//inisialisasi struct baru untuk search
+	
+	int i = 1;												//inisialisasi variabel yang dibutuhkan
+	 
+	if (kode == 1){											//kode untuk search + tambah jumlah harga terjual
+		if (temp == NULL){									//cek apabila isi dari list ada atau tidak
+			printf("Data belum dimasukkan!");				//pesan error
+		}
+		if (*ref != NULL){									//kombinasi if dan while loop untuk search
+			while (temp != NULL){							
+				if (i == nomor){							//search nomor yang dicari 
+					(*ref)->laku++;
+				}
+				temp = temp->next;
+				i++;
+			}
+		}
+	}
+}
+
+void back(struct varian** ref){
+	struct varian *end = *ref;
+	int pilih;
+	printf("\n\nPilih 1 untuk kembali ke menu awal dan selain 1 untuk keluar program\n");
+	scanf("%d", &pilih);
+	
+	switch (pilih){
+		case 1 :
+		system("cls");
+		menu(&end);
+		break;
+		
+		default:
+		system("cls");
+		printf("Terimakasih telah menggunakan program kami!"); 
+	}
+}
