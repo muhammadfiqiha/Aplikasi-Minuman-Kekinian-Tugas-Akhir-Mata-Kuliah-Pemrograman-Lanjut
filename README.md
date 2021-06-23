@@ -1,28 +1,4 @@
 # Aplikasi-Minuman-Kekinian-Tugas-Akhir-Mata-Kuliah-Pemrograman-Lanjut
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Aplikasi Minuman kekinian ini adalah aplikasi yang dapat digunakan oleh penjual minuman kekinian untuk mempermudah pekerjaannya dalam berdagang. Pada aplikasi ini, pedagang minuman kekinian dapat menambahkan list minuman yang akan dijual. List minuman terdiri dari nama minuman dan harga dari minuman. Selain itu, pedagang minuman kekinian juga dapat menghapus varian rasa dari minuman yang sudah habis atau kurang laku.
 This source code is made by …<<daftar nama dan NPM kelompok Anda>>... as final programming assignment in Even Semester 2020/2021 for course Advance Programming + Lab. (ENCE602003) in Undergraduate of Computer Engineering study program, Department of Electrical Engineering, Faculty of Engineering, Universitas Indonesia."
